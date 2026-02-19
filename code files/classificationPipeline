@@ -1,0 +1,18 @@
+# Encode categorical
+for col in customer_df.select_dtypes(include="object").columns:
+    customer_df[col] = LabelEncoder().fit_transform(customer_df[col])
+
+# Add macro features
+customer_df["Repo"] = repo
+customer_df["CRR"] = crr
+customer_df["SLR"] = slr
+
+X = customer_df.drop("term_deposit", axis=1)
+y = customer_df["term_deposit"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+neg, pos = np.bincount(y_train)
+scale_pos_weight = neg / pos
